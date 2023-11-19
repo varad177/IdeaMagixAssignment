@@ -38,15 +38,30 @@ const userSchema = new Schema(
     },
     role: {
       type: "String",
-      enum: ["USER", "ADMIN"],
-      default: "USER",
+      enum: ["INSTRUCTOR", "ADMIN"],
+      default: "INSTRUCTOR",
     },
     forgotPasswordToken: String,
     forgotPasswordExpiry: Date,
     subscription:{
       id : String,
       status : String
-    }
+    },
+    lectures :[
+      {
+        coursename: {
+          type : String,
+          default : "vv"
+        } ,
+        lecturename :{
+          type : String,
+          default : "vv"
+        } ,
+        date : Date
+
+      }
+
+    ]
   },
   {
     timestamps: true,

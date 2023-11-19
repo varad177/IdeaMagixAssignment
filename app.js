@@ -8,8 +8,8 @@ import  cors from 'cors'
 import morgan from 'morgan'
 import userRoutes from './routes/user.routes.js'
 import courseRoutes from './routes/course.routes.js'
-import paymentRoutes from './routes/payment.route.js'
-
+import path from "path";
+const __dirname = path.resolve();
 import errorMiddleware from './middleware/error.middleware.js'
 import bodyParser from 'body-parser'
 import { config } from 'dotenv'
@@ -30,8 +30,17 @@ app.use(cors({
 
 app.use('/user' , userRoutes)
 app.use('/course' , courseRoutes)
-app.use('/payments' , paymentRoutes)
+
 //routes of three modules 
+app.use(express.static(path.join(__dirname, "./client/dist")));
+app.get("*", function (_, res) {
+  res.sendFile(
+    path.join(__dirname, "./client/dist/index.html"),
+    function (err) {
+      res.status(500).send(err);
+    }
+  );
+});
 
 app.all('*', (req, res) => {
     res.status(404).send('opps! 404 page not found')

@@ -1,8 +1,7 @@
 import { Router } from "express";
-import { forgotPassword, getProfile, login, logout, resetPassword, resister , changepassword , updateuser} from "../controllers/user.controller.js";
-import { isLoggedIn } from "../middleware/auth.middleware.js";
+import {  getProfile, login, logout  , updateuser, getallnames, addlecInfo, resister} from "../controllers/user.controller.js";
 import upload from "../middleware/multer.middleware.js";
-import { sendContactMessage } from "../controllers/other.controller.js";
+import { isBusy } from "../middleware/checkBusy.middleware.js";
 
 const router = Router()
 
@@ -18,12 +17,11 @@ router.get("/logout" , logout);
 
 //to show profile
 router.get("/me/:id", getProfile);
+router.get("/allnames", getallnames);
+router.post("/addlecInfo",isBusy, addlecInfo);
 
-router.post('/reset' , forgotPassword);
 
-router.post('/reset/:resetToken' , resetPassword);
-router.post('/change-password' , isLoggedIn , changepassword);
+
 router.put('/update/:id'  , upload.single("avatar") , updateuser)
-router.post('/contact' , sendContactMessage)
 
 export default router

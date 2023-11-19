@@ -1,6 +1,7 @@
 import Course from "../models/course.model.js";
 import fs from "fs/promises";
 import cloudinary from "cloudinary";
+import User from "../models/user.model.js";
 const getAllCourse = async (req, res, next) => {
   try {
     const course = await Course.find({}).select("-lectures");
@@ -45,10 +46,10 @@ const getLectureByCourseId = async (req, res, next) => {
 
 const createCourse = async (req, res, next) => {
   try {
-    const { title, description, category, createdBy } = req.body;
-    console.log(title, description, category);
+    const { title, description, level, createdBy } = req.body;
+    console.log(title, description, level);
 
-    if (!title || !description || !category || !createdBy) {
+    if (!title || !description || !level || !createdBy) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -58,7 +59,7 @@ const createCourse = async (req, res, next) => {
     const course = await Course.create({
       title,
       description,
-      category,
+      level,
       createdBy,
       thumbnail: {
         public_id: "dummy",
@@ -66,7 +67,6 @@ const createCourse = async (req, res, next) => {
       },
     });
 
-    console.log("1", title, description, category);
     if (!course) {
       return res.status(400).json({
         success: false,
@@ -87,17 +87,15 @@ const createCourse = async (req, res, next) => {
         fs.rm(`uploads/${req.file.filename}`);
       } catch (e) {
         return res.status(400).json({
-          success: e.message,
-          message: "Course Could not be created",
+          success: false,
+          message: e.message,
         });
       }
     }
 
-    console.log(course);
-
     await course.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "course created successfully",
       course,
@@ -176,8 +174,10 @@ const removeCourse = async (req, res, next) => {
 
 const addLectureByCourseId = async (req, res, next) => {
   try {
-    const { title, description } = req.body;
+    const { title, description, instructor } = req.body;
     const { id } = req.params;
+
+    console.log(title, description);
 
     if (!title || !description) {
       return res.status(400).json({
@@ -197,32 +197,8 @@ const addLectureByCourseId = async (req, res, next) => {
     const lectureData = {
       title,
       description,
-      lecture: {
-        public_id: "dummy",
-        secure_url: "dummy",
-      },
+      instructor,
     };
-
-    if (req.file) {
-      try {
-        const result = await cloudinary.v2.uploader.upload(req.file.path, {
-          folder: "lms",
-          chunk_size: 50000000,
-          resource_type: "video",
-        });
-        if (result) {
-          lectureData.lecture.public_id = result.public_id;
-          lectureData.lecture.secure_url = result.secure_url;
-        }
-
-        fs.rm(`uploads/${req.file.filename}`);
-      } catch (e) {
-        return res.status(400).json({
-          success: e.message,
-          message: "Course Could not be created",
-        });
-      }
-    }
 
     course.lectures.push(lectureData);
     course.numberOfLectures = course.lectures.length;
@@ -280,15 +256,90 @@ const deleteLecture = async (req, res, next) => {
       });
     }
 
-    await cloudinary.v2.uploader.destroy(
-      course.lectures[lectureIndex].lecture.public_id,
-      {
-        resource_type: "video",
-      }
-    );
-
     course.lectures.splice(lectureIndex, 1);
     course.numberOfLectures = course.lectures.length;
+    await course.save();
+    res.status(200).json({
+      success: true,
+      message: "Course lecture removed successfully",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+const assignLecture = async (req, res, next) => {
+  try {
+    const { cid, lid } = req.query;
+    const { selectedTeacher , date } = req.body;
+
+  
+
+   
+      const instructor = selectedTeacher;
+
+     
+    
+
+      if(!instructor || !date){
+        return res.status(400).json({
+          success: false,
+          message: "fill all details",
+        });
+      }
+    if (!cid) {
+      return res.status(400).json({
+        success: false,
+        message: "course id not present ",
+      });
+    }
+
+    if (!lid) {
+      return res.status(400).json({
+        success: false,
+        message: "lecture id not present ",
+      });
+    }
+
+  
+
+    const course = await Course.findById(cid);
+
+    if (!course) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid ID ",
+      });
+    }
+
+    const lectureIndex = course.lectures.findIndex(
+      (lecture) => lecture._id.toString() === lid.toString()
+    );
+
+    if (lectureIndex === -1) {
+      return res.status(400).json({
+        success: false,
+        message: "lecture does not exist ",
+      });
+    }
+
+    // course.lectures.splice(lectureIndex, 1);
+    const { lectures } = course;
+    //  console.log(lectures[0]._id == lid);
+
+
+    for (let i = 0; i < lectures.length; i++) {
+      if (lectures[i]._id == lid) {
+        course.lectures[i].instructor = instructor;
+        course.lectures[i].date = date;
+      
+      }
+    }
+
+    // console.log(course);
+
     await course.save();
     res.status(200).json({
       success: true,
@@ -310,4 +361,5 @@ export {
   removeCourse,
   addLectureByCourseId,
   deleteLecture,
+  assignLecture,
 };

@@ -5,17 +5,17 @@ const courseSchema = new Schema(
     title: {
       type: String,
       require : [true , "Title is required"],
-      minLength : [4 , "title should be of minimum 4 character"],
+      minLength : [2, "title should be of minimum 4 character"],
       maxLength : [15 , "title should be of maximum 15 character"],
       trim : true,
     },
     description: {
       type: String,
       require : [true , "description is required"],
-      minLength : [8 , "description should be of minimum 8 character"],
+      minLength : [2 , "description should be of minimum 8 character"],
       
     },
-    category: {
+    level: {
       type: String,
       require : true,
     },
@@ -33,14 +33,8 @@ const courseSchema = new Schema(
       {
         title: String,
         description: String,
-        lecture: {
-          public_id: {
-            type: String,
-          },
-          secure_url: {
-            type: String,
-          },
-        },
+        instructor : String,
+        date : Date
       },
     ],
     numberOfLectures: {
