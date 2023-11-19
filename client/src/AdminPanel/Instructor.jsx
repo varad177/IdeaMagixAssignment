@@ -54,7 +54,7 @@ const Instructor = () => {
                 </tbody>
               </table>
             </div>
-          ))
+          
         </div>
       </div>
     </HomeLayouts>
