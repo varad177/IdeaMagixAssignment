@@ -33,6 +33,7 @@ const Assignlecture = () => {
 
   useEffect(() => {
     gettingallnames();
+    setBack(false)
   }, []);
 
   const onInputChange = async (e) => {
