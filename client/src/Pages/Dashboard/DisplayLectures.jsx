@@ -61,10 +61,10 @@ const DisplayLectures = () => {
                   return (
                     <li className="space-y-2 " key={lecture?._id}>
                       <p className="cursor-pointer">
-                        <span> {idx + 1} Lecture Name </span>
+                        <span> {idx + 1}. Lecture Name :-  </span>
                         {lecture?.title}
                         <br />
-                        <span> {idx + 1} Lecture Description </span>
+                        <span> {idx + 1}. Lecture Description:- </span>
                         {lecture?.description}
                       </p>
                       {role === "ADMIN" && (
@@ -96,7 +96,7 @@ const DisplayLectures = () => {
                               }
                               className="btn-accent px-2 py-1 rounded-md font-semibold"
                             >
-                              Lecture assigned
+                               assign Lecture
                             </button>
                           )}
                         </div>

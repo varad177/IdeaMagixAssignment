@@ -56,15 +56,16 @@ const Assignlecture = () => {
   });
 
   const navigate = useNavigate();
+  const [back, setBack] = useState(false);
 
   const handleAssignLecture = async (e) => {
     e.preventDefault();
     // Implement the logic to assign the lecture to the selected teacher
     const res = await dispatch(assignLecture({ cid, lid, data }));
     console.log(res.payload.success);
-   
-      await dispatch(addinglecturestouser({ userdata }));
-    
+
+    await dispatch(addinglecturestouser({ userdata }));
+    setBack(true);
   };
 
   return (
@@ -117,14 +118,21 @@ const Assignlecture = () => {
               />
             </div>
 
-            {}
-
-            <button
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
-              type="submit"
-            >
-              Assign Lecture
-            </button>
+            {back == false ? (
+              <button
+                className="bg-blue-500 text-white px-8 py-2 rounded-md"
+                type="submit"
+              >
+                Assign Lecture
+              </button>
+            ) : (
+              <button
+                className="bg-green-500 text-white px-8 py-2 rounded-md"
+                onClick={() => navigate(-1)}
+              >
+                Go Back
+              </button>
+            )}
           </div>
         </form>
       </div>
