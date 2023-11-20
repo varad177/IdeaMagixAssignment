@@ -125,13 +125,13 @@ const Assignlecture = () => {
               >
                 Assign Lecture
               </button>
-              {!back && (
-                <button
+              {back && (
+                <div
                   className="bg-green-500 text-white px-8 py-2 rounded-md"
                   onClick={() => navigate(-1)}
                 >
                   Go Back
-                </button>
+                </div>
               )}
             </div>
           </div>
