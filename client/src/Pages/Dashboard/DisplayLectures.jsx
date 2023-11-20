@@ -83,7 +83,7 @@ const DisplayLectures = () => {
                                 // onLectureDelete(state?._id, lecture?._id)
                                 toast("lecture is assigned already ")
                               }
-                              className="btn-accent px-2 py-1 rounded-md font-semibold"
+                              className="btn-accent px-2 py-1 bg-green-500 rounded-md font-semibold"
                             >
                               assigned
                             </button>
